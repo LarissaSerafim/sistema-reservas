@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Reserva</title>
+</head>
+<body>
+    <h2>Consultar Reserva</h2>
+    <form id="consultaReservaForm">
+        <label for="idReserva">ID da Reserva:</label>
+        <input type="text" id="idReserva" name="idReserva">
+        <button type="submit">Consultar</button>
+    </form>
+
+    <div id="resultadoReserva"></div>
+
+    <script>
+        document.getElementById("consultaReservaForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Evita o envio padrão do formulário
+            const idReserva = document.getElementById("idReserva").value;
+
+            try {
+                const response = await fetch(`/reservas/${idReserva}`); // Envia uma requisição GET para a rota /reservas/:id
+                const data = await response.json();
+                
+                // Exibe os dados da reserva na página
+                const resultadoDiv = document.getElementById("resultadoReserva");
+                resultadoDiv.innerHTML = ""; // Limpa o conteúdo anterior
+                if (data.length > 0) {
+                    const reserva = data[0]; // Supondo que apenas uma reserva será retornada
+                    resultadoDiv.innerHTML = `
+                        <h3>Dados da Reserva</h3>
+                        <p>ID: ${reserva.id}</p>
+                        <p>Data: ${reserva.data}</p>
+                        <p>Outros Dados: ${reserva.outros_dados}</p>
+                        <!-- Adicione mais campos conforme necessário -->
+                    `;
+                } else {
+                    resultadoDiv.textContent = "Reserva não encontrada";
+                }
+            } catch (error) {
+                console.error('Erro ao consultar reserva:', error.message);
+                resultadoDiv.textContent = "Erro ao consultar reserva. Por favor, tente novamente mais tarde.";
+            }
+        });
+    </script>
+</body>
+</html>
